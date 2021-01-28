@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useRef } from "react";
+import { Canvas, extend, useThree, useFrame } from "react-three-fiber";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import "./styles.css";
 
-function App() {
+extend({ OrbitControls });
+function Box() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <mesh>
+      <boxBufferGeometry attach="geometry" />
+      <meshLambertMaterial attach="material" color="hotpink" />
+    </mesh>
   );
 }
 
-export default App;
+const Controls = () => {
+  const controls = useRef();
+
+  const { camera, gl } = useThree();
+
+  useFrame(() => {
+    controls.current.update();
+  });
+
+  return (
+    <orbitControls
+      ref={controls}
+      args={[camera, gl.domElement]}
+    ></orbitControls>
+  );
+};
+
+export default function App() {
+  return (
+    <Canvas>
+      <Controls />
+      {/* <OrbitControls /> */}
+      <ambientLight intensity={0.5} />
+      <spotLight position={[10, 15, 10]} angle={0.3}/>
+      <Box />
+    </Canvas>
+  );
+}
